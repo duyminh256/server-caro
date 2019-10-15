@@ -1,5 +1,4 @@
 var User = require('../models/users');
-//var passport = require('../config/passport')
 const passport = require("passport")
 
 exports.register = (req, res) => {
@@ -43,7 +42,6 @@ exports.login = (req, res, next) => {
        
         if (passportUser) {
             const user = passportUser;
-            user.token = passportUser.generateJWT();
             return res.json({ user: user.toAuthJSON() });
         }
         return res.status(400).send({

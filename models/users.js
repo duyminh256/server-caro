@@ -38,7 +38,7 @@ UserSchema.methods.toAuthJSON = function () {
         email: this.email,
         username: this.username,
         passwordHash: this.passwordHash,
-        //token: this.generateJWT(),
+        token: this.generateJWT(),
     };
 };
 module.exports = mongoose.model('User', UserSchema);
