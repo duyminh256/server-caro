@@ -12,7 +12,6 @@ exports.register = (req, res) => {
         username: req.body.username || req.body.email,
     })
     user.setPassword(req.body.password)
-    console.log(user)
     user.save()
         .then(data => {
             res.send(data);
