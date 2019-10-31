@@ -4,10 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var authRouter = require('./routes/auth');
+
 
 const passport    = require('passport');
 
@@ -36,13 +35,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Content-Type", "application/x-www-form-urlencoded");
   next();
 });
 
 
 app.use('/', indexRouter);
 app.use('/user', usersRouter);
-//app.use('/auth', authRouter);
+
 
 
 // catch 404 and forward to error handler

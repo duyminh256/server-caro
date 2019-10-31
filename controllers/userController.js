@@ -48,6 +48,15 @@ exports.login = (req, res, next) => {
         })
     })(req, res, next);
 }
+exports.loginFacebook = (req, res, next) => {
+    passport.authenticate('facebook', {scope: ['email']})
+}
+exports.loginFacebookCallBack = (req, res, next) => {
+    console.log(req);
+}
+
+
+
 exports.me = (req, res) => {
     const { id } = req.payload;
     return User.findById(id)
