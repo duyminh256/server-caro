@@ -94,6 +94,7 @@ const io = require('socket.io')(server);
 
 
 let waitingList = [];
+let pool = []
 io.on('connection', socket => {
   console.log(socket.id)
   socket.on('FIND_PARNER', name => {
@@ -102,8 +103,11 @@ io.on('connection', socket => {
       console.log(waitingList)
     }else{
       partner = waitingList.shift()
-      console.log(partner)
-      io.to(`${partner.socketId}`).emit('SEND_PARTNER', { socketId: socket.id, name: name });
+      var _pool = [partner.socketId,socket.id]
+      pool.push(_pool) 
+      io.to(`${partner.socketId}`).emit('SET_UP_GAME', { playing: name, xIsNext: true,player: partner.name,opponent: name});
+      socket.emit('SET_UP_GAME',{ playing: name, xIsNext: true,player: name,opponent: partner.name});
+      io.to(`${partner.socketId}`).emit('SEND_PARTNER', { socketId: socket.id, name: name});
       socket.emit('SEND_PARTNER', partner);
     }
   });
@@ -112,7 +116,25 @@ io.on('connection', socket => {
       socket.emit('RECEIVE_MESSAGE',{message: messages.mes,from: messages.from});
   });
   socket.on('SEND_CARO', (position) => {
-    io.to(`${messages.to}`).emit('RECEIVE_MESSAGE', {message: messages.mes,from: messages.from});
-    socket.emit('RECEIVE_MESSAGE',{message: messages.mes,from: messages.from});
+    io.to(`${position.partner}`).emit('SEND_CLICK', {position: position.pos});
+    socket.emit('SEND_CLICK',{position:position.pos});
+  });
+  socket.on('UNDO', (partner) => {
+    io.to(`${partner}`).emit('SEND_REQUEST');
+  });
+  socket.on('RESPONSE_UNDO', (res) => {
+    console.log(res)
+    io.to(`${res.partner}`).emit('SEND_RESPONSE',res.res);
+    socket.emit('SEND_RESPONSE',res.res);
+  });
+  socket.on('disconnect', () => {
+    waitingList = waitingList.filter(data => data.socketId !== socket.id);
+    var _pool = []
+    pool.forEach(ele=>{
+      if(ele.filter(data => data === socket.id).length === 1)
+        _pool = ele
+    })
+    _pool = _pool.filter(data => data!== socket.id)
+    io.to(`${_pool[0]}`).emit('DISCONNECT');
   });
 });

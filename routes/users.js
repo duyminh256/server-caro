@@ -5,23 +5,16 @@ const auth = require('../routes/auth');
 const passport = require("passport")
 router.post('/register', auth.optional, users.register);
 router.post('/login',auth.optional, users.login);
-router.get('/auth/google',passport.authenticate('google', { scope: ['profile'] }));
-router.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
-    return res.json({ user: req });
-      // console.log(req);
-    // Successful authentication, redirect home.
-    res.redirect('/');
-  });
-router.get('/auth/facebook',
-  passport.authenticate('facebook'));
-
-router.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/login' }),
-  function(req, res) {
-    console.log(req.picture.data);
-    // Successful authentication, redirect home.
-    // res.redirect('/');
-  });
+router.post('/update',auth.required,users.edit);
+router.post('/auth/facebook/token',
+  passport.authenticate('facebook-token'),
+  function (req, res) {
+    // do something with req.user
+    res.send(req.data? 200 : 401);
+  }
+);
+router.post('/auth/google/token', passport.authenticate('google-token'),
+ function(req, res) {
+  res.send(req.data);
+});
 module.exports = router;

@@ -9,6 +9,8 @@ var Schema = mongoose.Schema;
 var UserSchema = new Schema({
     username: {type: String, required: true},
     email:{type:String,require: true},
+    age:{type:String},
+    url:{type:String},
     passwordHash:{type:String,require:true},
 });
 
@@ -34,8 +36,6 @@ UserSchema.methods.generateJWT = function () {
 
 UserSchema.methods.toAuthJSON = function () {
     return {
-        _id: this._id,
-        email: this.email,
         username: this.username,
         token: this.generateJWT(),
     };

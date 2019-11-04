@@ -6,7 +6,8 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
+var uploadRouter = require('./routes/upload')
+var cors  = require('cors')
 
 const passport    = require('passport');
 
@@ -32,16 +33,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.header("Content-Type", "application/x-www-form-urlencoded");
-  next();
-});
+app.use(cors());
 
 
 app.use('/', indexRouter);
 app.use('/user', usersRouter);
+app.use('/upload',uploadRouter)
 
 
 
