@@ -122,10 +122,18 @@ io.on('connection', socket => {
   socket.on('UNDO', (partner) => {
     io.to(`${partner}`).emit('SEND_REQUEST');
   });
+  socket.on('DRAW', (partner) => {
+    io.to(`${partner}`).emit('SEND_REQUEST_2');
+  });
   socket.on('RESPONSE_UNDO', (res) => {
     console.log(res)
     io.to(`${res.partner}`).emit('SEND_RESPONSE',res.res);
     socket.emit('SEND_RESPONSE',res.res);
+  });
+  socket.on('RESPONSE_DRAW', (res) => {
+    console.log(res)
+    io.to(`${res.partner}`).emit('SEND_RESPONSE_2',res.res);
+    socket.emit('SEND_RESPONSE_2',res.res);
   });
   socket.on('disconnect', () => {
     waitingList = waitingList.filter(data => data.socketId !== socket.id);

@@ -17,7 +17,7 @@ exports.register = (req, res) => {
     user.setPassword(req.body.password)
     user.save()
         .then(data => {
-            res.send(data);
+            res.send(data.toAuthJSON());
         }).catch(err => {
             res.status(500).send({
                 message: err.message || "Some error occurred while creating the User."
@@ -51,11 +51,61 @@ exports.login = (req, res, next) => {
         })
     })(req, res, next);
 }
-exports.loginFacebook = (req, res, next) => {
-    passport.authenticate('facebook', {scope: ['email']})
+exports.loginFacebook = (req, res, next) =>{
+    passport.authenticate('facebook-token', { session: false }, (err, passportUser) => {
+        if (err) {
+            return next(err);
+        }
+        if (passportUser) {
+            User.findOne({facebookId:passportUser.id})
+                .then(user=>{
+                    if(!user){
+                        user = new User({
+                            username: passportUser.displayName,
+                            email: passportUser.emails[0].value,
+                            facebookId: passportUser.id
+                        })
+                    }else{
+                        user.username = passportUser.displayName;
+                        user.email = passportUser.emails[0].value;
+                    }
+                    user.save()
+                    return res.json({ user: user.toAuthJSON() });
+                })
+        }else{
+            return res.status(400).send({
+                message: "Some thing went wrong."
+            })
+        }
+    })(req, res, next);
 }
-exports.loginFacebookCallBack = (req, res, next) => {
-    console.log(req);
+exports.loginGoogle = (req, res, next) =>{
+    passport.authenticate('google-token', { session: false }, (err, passportUser) => {
+        if (err) {
+            return next(err);
+        }
+        if (passportUser) {
+            User.findOne({googleId:passportUser.id})
+                .then(user=>{
+                    if(!user){
+                        user = new User({
+                            username: passportUser.displayName,
+                            email: passportUser.emails[0].value,
+                            googleId: passportUser.id
+                        })
+                    }else{
+                        user.username = passportUser.displayName;
+                        user.email = passportUser.emails[0].value;
+                    }
+                    user.save()
+                    return res.json({ user: user.toAuthJSON() });
+                })
+        }else{
+            return res.status(400).send({
+                message: "Some thing went wrong."
+            })
+        }
+    })(req, res, next);
 }
 
 

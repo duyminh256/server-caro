@@ -8,9 +8,7 @@ passport.use(new FacebookTokenStrategy({
   clientID: Key.FACEBOOK_APP_ID,
   clientSecret: Key.FACEBOOK_APP_SECRET
 }, function(accessToken, refreshToken, profile, done) {
-  User.findOrCreate({facebookId: profile.id}, function (error, user) {
-    return done(error, user);
-  });
+  return done(null,profile)
 }
 ));
 passport.use(new GoogleTokenStrategy({
@@ -18,9 +16,7 @@ passport.use(new GoogleTokenStrategy({
   clientSecret: Key.GOOGLE_CLIENT_SECRET
 },
 function(accessToken, refreshToken, profile, done) {
-  User.findOrCreate({ googleId: profile.id }, function (err, user) {
-    return done(err, user);
-  });
+  return done(null,profile)
 }
 ));
 

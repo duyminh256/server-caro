@@ -12,6 +12,8 @@ var UserSchema = new Schema({
     age:{type:String},
     url:{type:String},
     passwordHash:{type:String,require:true},
+    googleId:{type:String},
+    facebookId:{type:String}
 });
 
 UserSchema.methods.setPassword = function (password) {

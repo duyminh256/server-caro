@@ -23,6 +23,7 @@ var mongoose = require('mongoose');
 var mongoDB = "mongodb+srv://admin:123@demo-l6r8b.mongodb.net/CARO-VN?retryWrites=true"
 mongoose.connect(mongoDB, { useNewUrlParser: true,useUnifiedTopology: true });
 mongoose.Promise = global.Promise;
+mongoose.set('useFindAndModify', false);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
