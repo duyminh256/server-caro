@@ -125,6 +125,12 @@ io.on('connection', socket => {
   socket.on('DRAW', (partner) => {
     io.to(`${partner}`).emit('SEND_REQUEST_2');
   });
+  socket.on('NEW', (partner) => {
+    io.to(`${partner}`).emit('SEND_REQUEST_3');
+  });
+  socket.on('LOSE', (partner) => {
+    io.to(`${partner}`).emit('SEND_REQUEST_4');
+  });
   socket.on('RESPONSE_UNDO', (res) => {
     console.log(res)
     io.to(`${res.partner}`).emit('SEND_RESPONSE',res.res);
@@ -135,6 +141,22 @@ io.on('connection', socket => {
     io.to(`${res.partner}`).emit('SEND_RESPONSE_2',res.res);
     socket.emit('SEND_RESPONSE_2',res.res);
   });
+  socket.on('RESPONSE_NEW', (res) => {
+    if(res.res == false){
+      pool.forEach(ele=>{
+        if(ele.filter(data => data === res.partner).length === 1)
+          _pool = ele
+      })
+      pool = pool.filter(data=>data.filter(ele=> ele === res.partner).length !== 1)
+    }
+    io.to(`${res.partner}`).emit('SEND_RESPONSE_3',res.res);
+    socket.emit('SEND_RESPONSE_3',res.res);
+  });
+  socket.on('RESPONSE_LOSE', (res) => {
+    console.log(res)
+    io.to(`${res.partner}`).emit('SEND_RESPONSE_4',res.res);
+    socket.emit('SEND_RESPONSE_4_1',res.res);
+  });
   socket.on('disconnect', () => {
     waitingList = waitingList.filter(data => data.socketId !== socket.id);
     var _pool = []
@@ -142,7 +164,9 @@ io.on('connection', socket => {
       if(ele.filter(data => data === socket.id).length === 1)
         _pool = ele
     })
+    pool = pool.filter(data=>data.filter(ele=> ele === socket.id).length !== 1)
     _pool = _pool.filter(data => data!== socket.id)
+    
     io.to(`${_pool[0]}`).emit('DISCONNECT');
   });
 });

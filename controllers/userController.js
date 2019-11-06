@@ -13,6 +13,7 @@ exports.register = (req, res) => {
     const user = new User({
         email: req.body.email,
         username: req.body.username || req.body.email,
+        age: req.body.age
     })
     user.setPassword(req.body.password)
     user.save()
