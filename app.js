@@ -7,6 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var uploadRouter = require('./routes/upload')
+
 var cors  = require('cors')
 
 const passport    = require('passport');
@@ -26,6 +27,8 @@ mongoose.Promise = global.Promise;
 mongoose.set('useFindAndModify', false);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+
 
 
 app.use(logger('dev'));

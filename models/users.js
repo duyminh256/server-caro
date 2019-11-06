@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var bcrypt = require('bcrypt')
+var bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken');
 const saltRounds = 10;
 const key = require("../config/index")
